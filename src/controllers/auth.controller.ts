@@ -129,21 +129,21 @@ const forgotPassword = async (req: Request, res: Response) => {
       }).save();
     }
 
-    const link = `${process.env.BASE_URL}/password-reset/${user._id}/${token.token}`;
+    //const link = `${process.env.BASE_URL}/password-reset/${user._id}/${token.token}`;
 
-    await sendEmail({
-      email,
-      subject: "Password reset",
-      template: "verificationEmailTemplate.ejs",
-      compiledTemplateData: {
-        appname: appname,
-        verificationType: "password-reset",
-        buttonName: "Reset Password",
-        verifyurl: link,
-        actiontype: "password-reset",
-        appbaseurl: frontendBaseUrl,
-      },
-    });
+    // await sendEmail({
+    //   email,
+    //   subject: "Password reset",
+    //   template: "verificationEmailTemplate.ejs",
+    //   compiledTemplateData: {
+    //     appname: appname,
+    //     verificationType: "password-reset",
+    //     buttonName: "Reset Password",
+    //     verifyurl: link,
+    //     actiontype: "password-reset",
+    //     appbaseurl: frontendBaseUrl,
+    //   },
+    // });
 
     res.send("Password reset link sent to your email account");
   } catch (err) {
