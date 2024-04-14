@@ -11,7 +11,7 @@ const productsRoute: Router = Router();
 
 
 productsRoute.get("/", productsController.getProductsByCategory);
-
+//
 productsRoute.get(
   "/getProducts",
   verifyToken,
