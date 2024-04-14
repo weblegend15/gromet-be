@@ -15,6 +15,9 @@ import { sendEmail } from "../utils/sendEmail";
 import Token from "../models/token";
 
 const signup = async (req: Request, res: Response) => {
+
+  console.log("-------------SINGNUP---------------");
+
   try {
     const { username, email, password } = req.body;
     const userExists = await User.findOne({ email });
