@@ -83,7 +83,6 @@ const getByPage = async (req: Request, res: Response) => {
 };
 
 const getAllProducts = async (req: Request, res: Response) => {
-  console.log("getAllProducts");
   try {
     const all_books = await Product.find();
     return res.status(StatusCodes.OK).json({ data: all_books });

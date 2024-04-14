@@ -11,4 +11,3 @@ export const appname = process.env.APPNAME || "Gromet";
 export const frontendBaseVerificationUrl =
   process.env.BASE_CLIENT_USER_EMAIL_VERIFICATION_URL || "";
 export const frontendBaseUrl = process.env.BASE_CLIENT_URL || "";
-    
