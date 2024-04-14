@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import nodemailer from "nodemailer";
+import constants from "../constant";
 const ejs = require("ejs");
 const path = require("path");
 const fs = require("fs");
@@ -23,12 +24,12 @@ export const sendEmail = async ({
 }: sendEmailTypes) => {
   try {
     const transporter = nodemailer.createTransport({
-      port: parseInt(process.env.SMTP_PORT || ''),
-      host: process.env.SMTP_HOST,
+      port: constants.SMTP_PORT || 8001,
+      host: constants.SMTP_HOST,
       secure: false,
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: constants.EMAIL_USER,
+        pass: constants.EMAIL_PASS,
       },
     });
 
