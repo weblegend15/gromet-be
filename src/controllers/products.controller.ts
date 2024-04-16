@@ -92,6 +92,9 @@ const getAllProducts = async (req: Request, res: Response) => {
 };
 
 const getProductDetailsById = async (req: Request, res: Response) => {
+
+  console.log("getproductdetialbyid", req.params.id);
+
   const { id } = req.params;
   try {
     const book = await Product.findOne({ _id: id });
@@ -106,7 +109,27 @@ const getProductDetailsById = async (req: Request, res: Response) => {
   }
 };
 
+// const setProductCount = async (req: Request, res: Response) => {
+//   console.log("setting product count");
+//   const { count,id } = req.body;
 
+//   try {
+//     await Product.findOneAndUpdate(
+//       {
+//         _id: id,
+//       },
+//       {
+//         count:count
+//       },
+//       { new: true } 
+//     );
+//     return res.status(StatusCodes.OK).json({count, id});
+//   } catch (err) {
+//     console.log(err);
+//     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server Error");
+//   }
+
+// };
 
 const getNewProducts = async (req: Request, res: Response) => {
   const { itemCategory } = req.body.itemCategory;
@@ -366,6 +389,7 @@ const productsController = {
   getNewProducts,
   getAllProducts,
   getProductDetailsById,
+  //setProductCount
 };
 
 export default productsController;

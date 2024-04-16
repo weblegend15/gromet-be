@@ -27,10 +27,15 @@ productsRoute.get(
   [validatePayload(verifyItemByIdSchema), verifyToken],
   productsController.getProductDetailsById
 );
+
+//productsRoute.post("/count", verifyToken, productsController.setProductCount);
+
 productsRoute.post("/", verifyToken, productsController.create);
+
 productsRoute.put("/:id", verifyToken, async (req: Request, res: Response) => {
   await productsController.update(req, res);
 });
+
 productsRoute.delete("/:id", async (req: Request, res: Response) => {
   await productsController.deleteBook(req, res);
 });
