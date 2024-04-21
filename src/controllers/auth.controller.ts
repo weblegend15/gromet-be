@@ -16,7 +16,7 @@ import Token from "../models/token";
 
 const signup = async (req: Request, res: Response) => {
 
-  console.log("-------------SINGNUP---------------");
+  console.log("-------------SINGNUP---------------")
 
   try {
     const { username, email, password } = req.body;

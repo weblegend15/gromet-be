@@ -6,8 +6,22 @@ import { verifyToken } from "../middlewares/auth.middleware";
 import { validatePayload } from "../middlewares/payloadvalidator.middleware";
 import { verifyItemByIdSchema } from "../validators";
 
+import multer from 'multer';
 const productsRoute: Router = Router();
 
+const storage = multer.diskStorage({
+  destination: function (req: Request, file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) {
+      cb(null, 'public/assets/products/');
+  },
+  filename: function (req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      // Preserve the original file extension
+      const ext = file.originalname.split('.').pop();
+      cb(null, file.fieldname + '-' + uniqueSuffix + '.' + ext);
+  }
+});
+
+const upload = multer({ storage: storage });
 
 
 productsRoute.get("/", productsController.getProductsByCategory);
@@ -30,7 +44,11 @@ productsRoute.get(
 
 //productsRoute.post("/count", verifyToken, productsController.setProductCount);
 
-productsRoute.post("/", verifyToken, productsController.create);
+
+productsRoute.post("/createProduct", verifyToken, upload.array('files',10), productsController.createProduct);
+productsRoute.post("/updateProduct", verifyToken, upload.array('files',10), productsController.updateProduct);
+
+productsRoute.post("/deleteProduct", verifyToken, productsController.deleteProduct);
 
 productsRoute.put("/:id", verifyToken, async (req: Request, res: Response) => {
   await productsController.update(req, res);

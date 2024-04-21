@@ -9,7 +9,6 @@ export const verifyToken = (
   next: NextFunction
 ) => {
   const token = req.headers.authorization?.split(" ")[1];
-
   if (!token) {
     return res.status(StatusCodes.UNAUTHORIZED).send("No token provided");
   }

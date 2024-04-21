@@ -6,6 +6,8 @@ import Product from "../models/product";
 import { filterProducts } from "../utils/filterProducts";
 import { extractCategories } from "../utils/extractCategories";
 
+
+
 const getProductsByCategory = async (req: Request, res: Response) => {
   const { prodCategory, pageSize, currentPage } = req.query;
   try {
@@ -91,6 +93,65 @@ const getAllProducts = async (req: Request, res: Response) => {
   }
 };
 
+const createProduct = async (req: Request, res: Response) => {
+
+  const files: any = req.files;
+  let imageurl = '';
+  files.forEach((item: any) => {
+    const fileName = item.filename.split('.').slice(0, -1).join('.');
+    imageurl += fileName + ",";
+  });
+
+  try {
+    const body = req.body;
+    console.log(body.sifra_proizvoda, body.naziv_proizvoda_model)
+    body.sifra_proizvoda = JSON.parse(body.sifra_proizvoda);
+    body.naziv_proizvoda_model = JSON.parse(body.naziv_proizvoda_model);
+
+    req.body.slike = imageurl.slice(0, imageurl.length - 1);
+    const newProduct = await Product.create(body);
+    return res.status(StatusCodes.CREATED).json({ data: newProduct });
+  } catch (err) {
+    console.log("ERROR", err);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server Error");
+  }
+};
+
+const updateProduct = async (req: Request, res: Response) => {
+
+  const files: any = req.files;
+  let imageurl = '';
+  files.forEach((item: any) => {
+    const fileName = item.filename.split('.').slice(0, -1).join('.');
+    imageurl += fileName + ",";
+  });
+
+  try {
+    const body = req.body;
+    body.sifra_proizvoda = JSON.parse(body.sifra_proizvoda);
+    body.naziv_proizvoda_model = JSON.parse(body.naziv_proizvoda_model);
+
+    req.body.slike = imageurl.slice(0, imageurl.length - 1);
+    console.log(req.query)
+    const newProduct = await Product.findByIdAndUpdate({ _id: req.query.id }, body);
+    return res.status(StatusCodes.CREATED).json({ data: newProduct });
+  } catch (err) {
+    console.log("ERROR", err);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server Error");
+  }
+};
+
+const deleteProduct = async (req: Request, res: Response) => {
+  const { id } = req.body;
+  try {
+    await Product.findOneAndDelete({ _id: id });
+    return res.status(StatusCodes.OK).send("Delete Successfully");
+  } catch (err) {
+    console.log(err);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server Error");
+  }
+};
+
 const getProductDetailsById = async (req: Request, res: Response) => {
 
   console.log("getproductdetialbyid", req.params.id);
@@ -109,27 +170,6 @@ const getProductDetailsById = async (req: Request, res: Response) => {
   }
 };
 
-// const setProductCount = async (req: Request, res: Response) => {
-//   console.log("setting product count");
-//   const { count,id } = req.body;
-
-//   try {
-//     await Product.findOneAndUpdate(
-//       {
-//         _id: id,
-//       },
-//       {
-//         count:count
-//       },
-//       { new: true } 
-//     );
-//     return res.status(StatusCodes.OK).json({count, id});
-//   } catch (err) {
-//     console.log(err);
-//     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server Error");
-//   }
-
-// };
 
 const getNewProducts = async (req: Request, res: Response) => {
   const { itemCategory } = req.body.itemCategory;
@@ -389,7 +429,9 @@ const productsController = {
   getNewProducts,
   getAllProducts,
   getProductDetailsById,
-  //setProductCount
+  createProduct,
+  updateProduct,
+  deleteProduct,
 };
 
 export default productsController;
