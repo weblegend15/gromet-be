@@ -80,10 +80,29 @@ const login = async (req: Request, res: Response) => {
           actiontype: "verification",
           appbaseurl: frontendBaseUrl,
         },
-      });
+      });if (!user.isEmailVerified) {
+        res.status(202).send();
+        await sendEmail({
+          email,
+          subject: "Verification",
+          template: "verificationEmailTemplate.ejs",
+          compiledTemplateData: {
+            appname: appname,
+            verificationType: "login",
+            buttonName: "Verify",
+            verifyurl: `${req.get('host')}${frontendBaseVerificationUrl}?id=${user.id}`,
+            actiontype: "verification",
+            appbaseurl: frontendBaseUrl,
+          },
+        });
+        return;
+      }
       return;
     }
-
+    if (!user.isPhoneVerified) {
+      res.status(203).send();
+      return;
+    }
     const token = jwt.sign(
       { id: user.id, },
       secretKey,
@@ -118,37 +137,24 @@ const forgotPassword = async (req: Request, res: Response) => {
     if (!user)
       return res.status(400).send("User with given email doesn't exist");
 
-    let token = await Token.findOne({ userId: user._id });
-    if (!token) {
-      token = await new Token({
-        userId: user._id,
-        token: jwt.sign(
-          {
-            email: email,
-          },
-          secretKey,
-          { algorithm: "HS256" }
-        ),
-      }).save();
-    }
+    const link = `${frontendBaseUrl}/account/password-reset/${user._id}`;
 
-    //const link = `${process.env.BASE_URL}/password-reset/${user._id}/${token.token}`;
+    res.status(202).send("Password reset link sent to your email account");
+    await sendEmail({
+      email,
+      subject: "Password reset",
+      template: "resetpasswordtemplate.ejs",
+      compiledTemplateData: {
+        appname: appname,
+        verificationType: "password-reset",
+        buttonName: "Reset Password",
+        verifyurl: link,
+        actiontype: "password-reset",
+        appbaseurl: frontendBaseUrl,
+      },
+    });
+    return;
 
-    // await sendEmail({
-    //   email,
-    //   subject: "Password reset",
-    //   template: "verificationEmailTemplate.ejs",
-    //   compiledTemplateData: {
-    //     appname: appname,
-    //     verificationType: "password-reset",
-    //     buttonName: "Reset Password",
-    //     verifyurl: link,
-    //     actiontype: "password-reset",
-    //     appbaseurl: frontendBaseUrl,
-    //   },
-    // });
-
-    res.send("Password reset link sent to your email account");
   } catch (err) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server Error");
   }
@@ -169,12 +175,14 @@ const verifyUserById = async (req: Request, res: Response) => {
 };
 
 const resetPassword = async (req: Request, res: Response) => {
-  const { id } = req.query;
+  const { _id, password } = req.body;
   try {
+    console.log(req.body);
+    const encryptpassword = bcrypt.hashSync(password, 8);
     const updatedUser = await User.findOneAndUpdate(
-      { _id: id },
-      { isEmailVerified: true },
-      { new: true }
+      { _id: _id },
+      { password: encryptpassword },
+      { new: true },
     );
 
     return res.status(StatusCodes.OK).json(updatedUser);
