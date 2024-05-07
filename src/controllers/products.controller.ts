@@ -6,8 +6,6 @@ import Product from "../models/product";
 import { filterProducts } from "../utils/filterProducts";
 import { extractCategories } from "../utils/extractCategories";
 
-
-
 const getProductsByCategory = async (req: Request, res: Response) => {
   const { prodCategory, pageSize, currentPage } = req.query;
   try {
@@ -16,23 +14,25 @@ const getProductsByCategory = async (req: Request, res: Response) => {
     const startIndex: number = currentPageNumber * pageSizeNumber;
     const endIndex: number = (currentPageNumber + 1) * pageSizeNumber;
     const filterKeys: string[] = [
-      'id',
-      'name',
-      'article_code_and_model',
-      'unit_of_measure',
-      'vp_price',
-      'net_price',
-      'rebate',
-      'min_pack',
-      'trans_pack',
-      'stock'
+      "id",
+      "name",
+      "article_code_and_model",
+      "unit_of_measure",
+      "vp_price",
+      "net_price",
+      "rebate",
+      "min_pack",
+      "trans_pack",
+      "stock",
     ];
 
     let productsFilteredByCategory: any;
     if (!prodCategory) {
       productsFilteredByCategory = await Product.find({});
     } else {
-      const categoryQueries = extractCategories({ prodCategory: prodCategory as string });
+      const categoryQueries = extractCategories({
+        prodCategory: prodCategory as string,
+      });
       productsFilteredByCategory = await Product.find({ $or: categoryQueries });
     }
 
@@ -44,17 +44,16 @@ const getProductsByCategory = async (req: Request, res: Response) => {
     });
 
     res.status(StatusCodes.OK).json({ filteredProducts });
-
   } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server error.");
   }
 };
 
 const getProductById = async (req: Request, res: Response) => {
-  console.log("getProductBiId", req.params.id);
   const productId = req.params.id;
+
   try {
-    const productFilteredById = await Product.findById(productId);
+    const productFilteredById = await Product.findById(productId.slice(3));
     res.status(StatusCodes.OK).json(productFilteredById);
   } catch {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server error.");
@@ -94,17 +93,16 @@ const getAllProducts = async (req: Request, res: Response) => {
 };
 
 const createProduct = async (req: Request, res: Response) => {
-
   const files: any = req.files;
-  let imageurl = '';
+  let imageurl = "";
   files.forEach((item: any) => {
-    const fileName = item.filename.split('.').slice(0, -1).join('.');
+    const fileName = item.filename.split(".").slice(0, -1).join(".");
     imageurl += fileName + ",";
   });
 
   try {
     const body = req.body;
-    console.log(body.sifra_proizvoda, body.naziv_proizvoda_model)
+    console.log(body.sifra_proizvoda, body.naziv_proizvoda_model);
     body.sifra_proizvoda = JSON.parse(body.sifra_proizvoda);
     body.naziv_proizvoda_model = JSON.parse(body.naziv_proizvoda_model);
 
@@ -118,11 +116,10 @@ const createProduct = async (req: Request, res: Response) => {
 };
 
 const updateProduct = async (req: Request, res: Response) => {
-
   const files: any = req.files;
-  let imageurl = '';
+  let imageurl = "";
   files.forEach((item: any) => {
-    const fileName = item.filename.split('.').slice(0, -1).join('.');
+    const fileName = item.filename.split(".").slice(0, -1).join(".");
     imageurl += fileName + ",";
   });
 
@@ -132,8 +129,11 @@ const updateProduct = async (req: Request, res: Response) => {
     body.naziv_proizvoda_model = JSON.parse(body.naziv_proizvoda_model);
 
     req.body.slike = imageurl.slice(0, imageurl.length - 1);
-    console.log(req.query)
-    const newProduct = await Product.findByIdAndUpdate({ _id: req.query.id }, body);
+    console.log(req.query);
+    const newProduct = await Product.findByIdAndUpdate(
+      { _id: req.query.id },
+      body
+    );
     return res.status(StatusCodes.CREATED).json({ data: newProduct });
   } catch (err) {
     console.log("ERROR", err);
@@ -153,7 +153,6 @@ const deleteProduct = async (req: Request, res: Response) => {
 };
 
 const getProductDetailsById = async (req: Request, res: Response) => {
-
   console.log("getproductdetialbyid", req.params.id);
 
   const { id } = req.params;
@@ -169,7 +168,6 @@ const getProductDetailsById = async (req: Request, res: Response) => {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server Error");
   }
 };
-
 
 const getNewProducts = async (req: Request, res: Response) => {
   const { itemCategory } = req.body.itemCategory;

@@ -8,7 +8,6 @@ export interface Constants {
     EMAIL_PASS: string;
     BASE_CLIENT_URL: string;
     BASE_CLIENT_USER_EMAIL_VERIFICATION_URL: string;
-    BASE_URL: string;
   }
   
   const constants: Constants = {
@@ -22,7 +21,6 @@ export interface Constants {
     BASE_CLIENT_URL: 'https://gromet.vercel.app',
     // BASE_CLIENT_URL: 'http://localhost:3000',
     BASE_CLIENT_USER_EMAIL_VERIFICATION_URL: '/account/verifyuserbyid',
-    BASE_URL: 'http://localhost:8001'
   };
   
 export default constants;

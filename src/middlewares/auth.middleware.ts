@@ -19,6 +19,7 @@ export const verifyToken = (
     }
     // @ts-ignore
     req.body.user_id = decoded?.id;
+    // console.log(decoded || "none");
     req.headers["Authorization"] = `Bearer ${token}`;
     next();
   });

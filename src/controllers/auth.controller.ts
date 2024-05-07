@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import path from 'path';
+import path from "path";
 
 import User from "../models/user";
 import {
@@ -15,8 +15,7 @@ import { sendEmail } from "../utils/sendEmail";
 import Token from "../models/token";
 
 const signup = async (req: Request, res: Response) => {
-
-  console.log("-------------SINGNUP---------------")
+  console.log("-------------SINGNUP---------------");
 
   try {
     const { username, email, password } = req.body;
@@ -39,7 +38,9 @@ const signup = async (req: Request, res: Response) => {
         appname: appname,
         verificationType: "signup",
         buttonName: "Verify",
-        verifyurl: `${req.get('host')}${frontendBaseVerificationUrl}?id=${user.id}`,
+        verifyurl: `${req.get("host")}${frontendBaseVerificationUrl}?id=${
+          user.id
+        }`,
         actiontype: "verification",
         appbaseurl: frontendBaseUrl,
       },
@@ -51,9 +52,7 @@ const signup = async (req: Request, res: Response) => {
   }
 };
 
-
 const login = async (req: Request, res: Response) => {
-
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
@@ -76,11 +75,14 @@ const login = async (req: Request, res: Response) => {
           appname: appname,
           verificationType: "login",
           buttonName: "Verify",
-          verifyurl: `${req.get('host')}${frontendBaseVerificationUrl}?id=${user.id}`,
+          verifyurl: `${req.get("host")}${frontendBaseVerificationUrl}?id=${
+            user.id
+          }`,
           actiontype: "verification",
           appbaseurl: frontendBaseUrl,
         },
-      });if (!user.isEmailVerified) {
+      });
+      if (!user.isEmailVerified) {
         res.status(202).send();
         await sendEmail({
           email,
@@ -90,7 +92,9 @@ const login = async (req: Request, res: Response) => {
             appname: appname,
             verificationType: "login",
             buttonName: "Verify",
-            verifyurl: `${req.get('host')}${frontendBaseVerificationUrl}?id=${user.id}`,
+            verifyurl: `${req.get("host")}${frontendBaseVerificationUrl}?id=${
+              user.id
+            }`,
             actiontype: "verification",
             appbaseurl: frontendBaseUrl,
           },
@@ -103,11 +107,10 @@ const login = async (req: Request, res: Response) => {
       res.status(203).send();
       return;
     }
-    const token = jwt.sign(
-      { id: user.id, },
-      secretKey,
-      { algorithm: "HS256", expiresIn: "7d" }
-    );
+    const token = jwt.sign({ id: user.id }, secretKey, {
+      algorithm: "HS256",
+      expiresIn: "7d",
+    });
 
     return res.status(200).json({ accessToken: token, data: user });
   } catch (err) {
@@ -115,10 +118,10 @@ const login = async (req: Request, res: Response) => {
   }
 };
 
-
 const fetchMe = async (req: Request, res: Response) => {
   // const email = req.body?.decoded?.email;
   const { user_id } = req.body;
+  console.log("here?", user_id);
   try {
     const user = await User.findOne({ _id: user_id });
     console.log(user, user_id);
@@ -140,6 +143,7 @@ const forgotPassword = async (req: Request, res: Response) => {
     const link = `${frontendBaseUrl}/account/password-reset/${user._id}`;
 
     res.status(202).send("Password reset link sent to your email account");
+
     await sendEmail({
       email,
       subject: "Password reset",
@@ -153,8 +157,8 @@ const forgotPassword = async (req: Request, res: Response) => {
         appbaseurl: frontendBaseUrl,
       },
     });
-    return;
 
+    return;
   } catch (err) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server Error");
   }
@@ -168,7 +172,11 @@ const verifyUserById = async (req: Request, res: Response) => {
       { isEmailVerified: true },
       { new: true }
     );
-    return res.status(StatusCodes.OK).sendFile(path.join(__dirname, '../templates/verificationWebTemplate.html'));
+    return res
+      .status(StatusCodes.OK)
+      .sendFile(
+        path.join(__dirname, "../templates/verificationWebTemplate.html")
+      );
   } catch (err) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server Error");
   }
@@ -182,7 +190,7 @@ const resetPassword = async (req: Request, res: Response) => {
     const updatedUser = await User.findOneAndUpdate(
       { _id: _id },
       { password: encryptpassword },
-      { new: true },
+      { new: true }
     );
 
     return res.status(StatusCodes.OK).json(updatedUser);
