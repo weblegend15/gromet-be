@@ -36,7 +36,7 @@ const userSchema: Schema = new Schema(
       required: true,
     },
     roles: {
-      type: [String],
+      type: String,
       enum: Roles,
       required: true,
       default: Roles.DEFAULT,
