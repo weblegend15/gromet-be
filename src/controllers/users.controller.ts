@@ -13,6 +13,15 @@ const getAllUsers = async (req: Request, res: Response) => {
   }
 };
 
+const getUser = async (req: Request, res: Response) => {
+  try {
+    const user = await User.findOne({ email: req.query.user });
+    return res.status(StatusCodes.OK).json({ data: user });
+  } catch (err) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server Error");
+  }
+};
+
 const DeleteAllUsers = async (req: Request, res: Response) => {
   try {
     const result = await Cart.deleteMany({ roles: "USER" });
@@ -51,11 +60,37 @@ const VerifyPhoneById = async (req: Request, res: Response) => {
   }
 };
 
+const updateUser = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const { data } = req.body;
+    if (!data) {
+      return res.status(StatusCodes.BAD_REQUEST).send("Invalid input");
+    }
+
+    const result = await User.findOneAndUpdate(
+      { _id: data._id },
+      { $set: data },
+      { new: true, runValidators: true }
+    );
+
+    if (!result) {
+      return res.status(StatusCodes.NOT_FOUND).send("User not found");
+    }
+
+    return res.status(StatusCodes.OK).json({ data: result });
+  } catch (err) {
+    console.error(err);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server Error");
+  }
+};
+
 const usersController = {
   DeleteAllUsers,
   getAllUsers,
   DeleteUserByID,
   VerifyPhoneById,
+  getUser,
+  updateUser,
 };
 
 export default usersController;

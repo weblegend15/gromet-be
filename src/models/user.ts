@@ -41,6 +41,10 @@ const userSchema: Schema = new Schema(
       required: true,
       default: Roles.DEFAULT,
     },
+    rebate: {
+      type: Number,
+      default: 10,
+    },
   },
   { timestamps: true }
 );

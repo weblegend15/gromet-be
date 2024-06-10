@@ -52,6 +52,7 @@ export interface IProduct extends Document {
   vp_price: number;
   net_price: number;
   rebate: number;
+  price: number;
 }
 
 export interface IProductModel extends Model<IProduct> {}
@@ -258,6 +259,10 @@ const productSchema: Schema = new Schema(
     rebate: {
       type: Number,
       //required: true
+    },
+    price: {
+      type: Number,
+      default: 100,
     },
   },
   { timestamps: true }

@@ -26,6 +26,7 @@ const signup = async (req: Request, res: Response) => {
       username: username,
       email: email,
       password: bcrypt.hashSync(password, 8),
+      rebate: 10,
     });
     await user.save();
 

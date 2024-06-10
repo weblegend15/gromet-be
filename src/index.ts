@@ -7,9 +7,6 @@ import cors from "cors";
 import {mongoURI, port} from "./config";
 import router from "./routes";
 
-
-
-
 mongoose.connect(mongoURI).then(async () => {
     console.log("Mongoose connected successfully");
 }).catch((err) => {

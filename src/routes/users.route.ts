@@ -8,6 +8,8 @@ usersRoute.get("/DeleteAllUsers", verifyToken, usersController.DeleteAllUsers);
 
 usersRoute.get("/getAllUsers", verifyToken, usersController.getAllUsers);
 usersRoute.post("/DeleteUserByID", verifyToken, usersController.DeleteUserByID);
+usersRoute.get("/getUser", verifyToken, usersController.getUser);
+usersRoute.post("/updateUser", verifyToken, usersController.updateUser);
 usersRoute.post(
   "/VerifyPhoneById",
   verifyToken,

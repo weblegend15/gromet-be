@@ -129,7 +129,7 @@ const updateProduct = async (req: Request, res: Response) => {
     body.naziv_proizvoda_model = JSON.parse(body.naziv_proizvoda_model);
 
     req.body.slike = imageurl.slice(0, imageurl.length - 1);
-    console.log(req.query);
+    console.log(body);
     const newProduct = await Product.findByIdAndUpdate(
       { _id: req.query.id },
       body
