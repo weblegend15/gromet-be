@@ -42,8 +42,13 @@ const userSchema: Schema = new Schema(
       default: Roles.DEFAULT,
     },
     rebate: {
-      type: Number,
-      default: 10,
+      type: Array,
+      default: [
+        {
+          category: "default",
+          value: 10,
+        },
+      ],
     },
   },
   { timestamps: true }
