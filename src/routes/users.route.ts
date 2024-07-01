@@ -15,5 +15,10 @@ usersRoute.post(
   verifyToken,
   usersController.VerifyPhoneById
 );
+usersRoute.post(
+  "/VerifyEmailById",
+  verifyToken,
+  usersController.VerifyEmailById
+);
 
 export default usersRoute;

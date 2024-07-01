@@ -31,21 +31,6 @@ const signup = async (req: Request, res: Response) => {
     await user.save();
 
     res.status(202).send();
-    sendEmail({
-      email,
-      subject: "Verification",
-      template: "verificationEmailTemplate.ejs",
-      compiledTemplateData: {
-        appname: appname,
-        verificationType: "signup",
-        buttonName: "Verify",
-        verifyurl: `${req.get("host")}${frontendBaseVerificationUrl}?id=${
-          user.id
-        }`,
-        actiontype: "verification",
-        appbaseurl: frontendBaseUrl,
-      },
-    });
     return;
   } catch (err) {
     console.log(err);

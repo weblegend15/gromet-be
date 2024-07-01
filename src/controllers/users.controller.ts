@@ -3,6 +3,14 @@ import Cart from "../models/cart";
 import { StatusCodes } from "http-status-codes";
 import Product from "../models/product";
 import User from "../models/user";
+import { sendEmail } from "../utils/sendEmail";
+
+import {
+  secretKey,
+  appname,
+  frontendBaseUrl,
+  frontendBaseVerificationUrl,
+} from "../config";
 
 const getAllUsers = async (req: Request, res: Response) => {
   try {
@@ -36,7 +44,7 @@ const DeleteUserByID = async (req: Request, res: Response) => {
     const { selected } = req.body;
     console.log(selected);
     const result = await User.findOneAndDelete({
-      _id: selected,
+      email: selected,
     });
     return res.status(StatusCodes.OK).json({ data: result });
   } catch (err) {
@@ -49,12 +57,38 @@ const VerifyPhoneById = async (req: Request, res: Response) => {
     const { selected } = req.body;
     const result: any = await User.findOneAndUpdate(
       {
-        _id: selected,
+        email: selected,
       },
       { $set: { isPhoneVerified: true } },
       { new: true }
     );
     return res.status(StatusCodes.OK).json({ data: result });
+  } catch (err) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server Error");
+  }
+};
+
+const VerifyEmailById = async (req: Request, res: Response) => {
+  try {
+    const { selected } = req.body;
+    const user = await User.findOne({ email: selected });
+
+    sendEmail({
+      email: selected,
+      subject: "Verification",
+      template: "verificationEmailTemplate.ejs",
+      compiledTemplateData: {
+        appname: appname,
+        verificationType: "signup",
+        buttonName: "Verify",
+        verifyurl: `${req.get("host")}${frontendBaseVerificationUrl}?id=${
+          user?._id
+        }`,
+        actiontype: "verification",
+        appbaseurl: frontendBaseUrl,
+      },
+    });
+    return res.status(StatusCodes.OK).json({ data: "Sent" });
   } catch (err) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server Error");
   }
@@ -89,6 +123,7 @@ const usersController = {
   getAllUsers,
   DeleteUserByID,
   VerifyPhoneById,
+  VerifyEmailById,
   getUser,
   updateUser,
 };
