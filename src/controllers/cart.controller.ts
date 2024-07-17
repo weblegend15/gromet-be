@@ -5,9 +5,20 @@ import Product from "../models/product";
 
 const createCart = async (req: Request, res: Response) => {
   try {
-    const body = req.body;
-    const newCart = await Cart.create(body);
-    return res.status(StatusCodes.CREATED).json({ data: newCart });
+    const { itemNum, count, user_id } = req.body;
+
+    const existingItem = await Cart.findOne({ itemNum, user_id });
+
+    if (existingItem) {
+      // Item exists, update the count
+      existingItem.count = Number(existingItem.count) + Number(count);
+      await existingItem.save();
+      return res.status(StatusCodes.OK).json({ data: existingItem });
+    } else {
+      // Item does not exist, create a new one
+      const newCart = await Cart.create(req.body);
+      return res.status(StatusCodes.CREATED).json({ data: newCart });
+    }
   } catch (err) {
     console.log("ERROR", err);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("Server Error");

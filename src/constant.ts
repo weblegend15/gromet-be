@@ -20,7 +20,7 @@ const constants: Constants = {
   EMAIL_USER: "podrska@gromet.rs",
   EMAIL_PASS: "podrsk@22022024",
   BASE_CLIENT_URL: "https://gromet.vercel.app",
-  // BASE_CLIENT_URL: 'http://localhost:3000',
+  // BASE_CLIENT_URL: "http://localhost:3000",
   BASE_CLIENT_USER_EMAIL_VERIFICATION_URL: "/account/verifyuserbyid",
 };
 
